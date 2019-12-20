@@ -4,8 +4,8 @@ import (
   "github.com/graphql-go/graphql"
 )
 
-var NotToDo = graphql.NewObject(graphql.ObjectConfig {
-  Name: "NotToDo",
+var NotTodo = graphql.NewObject(graphql.ObjectConfig {
+  Name: "NotTodo",
   Fields: graphql.Fields{
     "name": &graphql.Field{
       Type: graphql.String,

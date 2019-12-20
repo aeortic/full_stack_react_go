@@ -20,32 +20,28 @@ var GetNotTodos = &graphql.Field {
   Resolve: func(params graphql.ResolveParams) (interface{}, error) {
     notTodoCollection := mongo.Client.Database("medium-app").Collection("Not_Todos")
 
-    todos, err := notTodoCollection.Find(context.Background(), nil)
+    todos, err := notTodoCollection.Find(context.Background(), bson.D{})
     if err != nil { panic(err) }
 
     var todosList []todoStruct
 
     for todos.Next(context.Background()) {
-      doc := bson.NewDocument()
+      var doc bson.M
 
-      err := todos.Decode(doc)
-      if err != nil { panic(err)}
-
-      keys, err := doc.Keys(false)
+      err := todos.Decode(&doc)
       if err != nil { panic(err)}
 
       // convert BSON to struct
       todo := todoStruct{}
-      for _, key := range keys {
-        keyString := key.String()
-        elm, err := doc.Lookup(keyString)
-        if err != nil { panic(err) }
+      for key := range doc {
 
-        switch (keyString) {
+        value := doc[key].(string)
+
+        switch (key) {
           case "name":
-            todo.NAME = elm.Value().StringValue()
+            todo.NAME = value
           case "description":
-            todo.DESCRIPTION = elm.Value().StringValue()
+            todo.DESCRIPTION = value
           default:
         }
       }
